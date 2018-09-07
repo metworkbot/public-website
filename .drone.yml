@@ -1,6 +1,6 @@
 pipeline:
   deploy:
-    image: centos6
+    image: centos:centos6
     commands:
       - rm -Rf /var/www/html/soon2
       - mkdir -p /var/www/html/soon2
