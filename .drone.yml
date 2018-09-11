@@ -1,4 +1,15 @@
 pipeline:
+  staging:
+    image: centos:centos6
+    commands:
+      - rm -Rf /var/www/html/staging
+      - mkdir -p /var/www/html/staging
+      - cp -Rf * /var/www/html/staging/
+    when:
+      event: push
+      branch: integration
+    volumes:
+      - /var/www/html:/var/www/html
   deploy:
     image: centos:centos6
     commands:
