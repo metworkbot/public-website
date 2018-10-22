@@ -1,23 +1,23 @@
+build_common: &build_common
+  commands:
+    - /opt/metwork-mfserv/bin/mfserv_wrapper make release
+
 pipeline:
-  staging:
-    image: centos:centos6
-    commands:
-      - rm -Rf /var/www/html/staging
-      - mkdir -p /var/www/html/staging
-      - cp -Rf * /var/www/html/staging/
+  build_integration:
+    <<: *build_common
+    image: metwork/mfservplugins-${OS_VERSION}-buildimage:integration
     when:
-      event: push
+      event: [push, pull_request]
       branch: integration
-    volumes:
-      - /var/www/html:/var/www/html
-  deploy:
-    image: centos:centos6
-    commands:
-      - rm -Rf /var/www/html/soon2
-      - mkdir -p /var/www/html/soon2
-      - cp -Rf * /var/www/html/soon2/
+  build:
+    <<: *build_common
+    image: metwork/mfservplugins-${OS_VERSION}-buildimage:master
     when:
       event: push
-      branch: master
-    volumes:
-      - /var/www/html:/var/www/html
+      branch: [ master, ci_*, pci_* ]
+
+matrix:
+  OS_VERSION:
+    - centos7
+
+branches: [ master, integration, ci_*, pci_* ]
